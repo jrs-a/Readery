@@ -1,7 +1,7 @@
 class Genre {
   final int genreId;
   final String genre;
-  final List novelIds; //fk to Novel many to many
+  final List novelIds;
 
-  Genre(this.genreId, this.genre, this.novelId);
+  Genre(this.genreId, this.genre, this.novelIds); //fk to Novel many to many
 }

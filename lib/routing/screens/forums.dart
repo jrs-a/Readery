@@ -23,7 +23,7 @@ class _ForumsPageState extends State<ForumsPage> {
           children: [
             Container(
               child: Text(
-                "Explore Forums",
+                "My Forums",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),

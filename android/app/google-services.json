@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "392351747230",
+    "project_id": "readery-f8607",
+    "storage_bucket": "readery-f8607.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:392351747230:android:ebc9a648c793e853493f8f",
+        "android_client_info": {
+          "package_name": "com.example.readery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "392351747230-07j8g35n433sfugq7girpkhkkatk9bgg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNCt3gXI6fwR2xi6s16dVaz9hIM73JF5w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "392351747230-07j8g35n433sfugq7girpkhkkatk9bgg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
