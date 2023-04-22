@@ -3,6 +3,9 @@ import 'package:readery/routing/screens/explore.dart';
 import 'package:readery/routing/screens/forums.dart';
 import 'package:readery/routing/screens/home_page.dart';
 import 'package:readery/routing/screens/library.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:readery/features/auth/logged_in.dart';
+import 'package:readery/features/auth/login_page.dart';
 
 class RootPage extends StatefulWidget {
   const RootPage({Key? key}) : super(key: key);

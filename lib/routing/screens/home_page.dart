@@ -1,7 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:readery/features/auth/login_page.dart';
+import 'package:readery/features/auth/logged_in.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        body: StreamBuilder(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasData) {
+                return UserProfile();
+              } else if (snapshot.hasError) {
+                return const Center(child: Text('Somehing Went Wrong!'));
+              } else {
+                return const SignIn();
+              }
+            }),
+      );
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -26,7 +46,7 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     WidgetSearch(size: size),
-                    WidgetNotif(),
+                    const WidgetNotif(),
                   ])),
           //scrollable part here laters
         ])));

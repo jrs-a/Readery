@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:readery/features/auth/google_signin.dart';
 import 'package:readery/routing/onboarding_screen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:readery/routing/root_page.dart';
+import 'package:readery/routing/screens/home_page.dart';
+import 'package:readery/features/auth/logged_in.dart';
 
 //if you encounter errors on the imports I installed firebase plugins through the readery terminal (windows)
 
@@ -18,8 +21,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 //Log in credentials
 //email: test@hotmail.com
 //password: test123
-class Login extends StatelessWidget {
-  const Login({Key? key}) : super(key: key);
+class SignIn extends StatelessWidget {
+  const SignIn({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,23 +36,6 @@ class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
   @override
   _HomepageState createState() => _HomepageState();
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        body: StreamBuilder(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasData) {
-                return const OnboardingScreen();
-              } else if (snapshot.hasError) {
-                return const Center(child: Text('Somehing Went Wrong!'));
-              } else {
-                return const Login();
-              }
-            }),
-      );
 }
 
 class _HomepageState extends State<Homepage> {
@@ -190,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 print(user);
                 if (user != null) {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => const OnboardingScreen()));
+                      builder: (context) => const RootPage()));
                 }
               },
               child: const Text(

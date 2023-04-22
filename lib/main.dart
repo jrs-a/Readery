@@ -6,6 +6,9 @@ import 'package:readery/routing/onboarding_screen.dart';
 import 'package:readery/features/auth/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:readery/routing/root_page.dart';
+import 'package:readery/routing/screens/home_page.dart';
+import 'package:readery/features/auth/logged_in.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +33,7 @@ class MyApp extends StatelessWidget {
             scaffoldBackgroundColor: Theme.of(context).colorScheme.background,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
-          home: const Login(),
+          home: HomePage(),
         ),
       );
 }
