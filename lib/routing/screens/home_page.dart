@@ -1,10 +1,18 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:readery/features/auth/login_page.dart';
-import 'package:readery/features/auth/logged_in.dart';
+import 'package:flutter/material.dart';
+import 'package:readery/routing/root_page.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+import '../../features/auth/login_page.dart';
+import '../../features/auth/user_profile.dart';
+
+/*
+  checkStatus() - checks status if logged in for redirection
+                - i thought it fits on the starting page of an app and before the home page
+  homePage() - show homepage
+*/
+
+class CheckStatus extends StatelessWidget {
+  const CheckStatus({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -14,20 +22,25 @@ class HomePage extends StatefulWidget {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasData) {
-                return UserProfile();
+                return const RootPage();
               } else if (snapshot.hasError) {
                 return const Center(child: Text('Somehing Went Wrong!'));
               } else {
-                return const SignIn();
+                return const Login();
               }
             }),
       );
+}
+
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  //Appbar
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -131,7 +144,10 @@ class WidgetNotif extends StatelessWidget {
                 width: 40,
                 child: IconButton(
                   icon: const Icon(Icons.person_2_outlined),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => UserProfile()));
+                  },
                 )),
           ]),
     );

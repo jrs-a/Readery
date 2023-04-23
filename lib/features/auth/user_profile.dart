@@ -4,6 +4,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:readery/features/auth/google_signin.dart';
 
+/*
+  UserProfile() - display profile info and logout btn
+*/
+
 class UserProfile extends StatelessWidget {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
@@ -19,12 +23,13 @@ class UserProfile extends StatelessWidget {
         centerTitle: true,
         actions: [
           TextButton(
-            onPressed: () {
+            child: const Text('Logout'),
+            onPressed: () async {
               final provider =
                   Provider.of<GoogleSignInProvider>(context, listen: false);
-              provider.logout();
+              await provider.signOut();
+              Navigator.of(context).pop();
             },
-            child: const Text('Logout'),
           )
         ],
       ),
@@ -37,18 +42,18 @@ class UserProfile extends StatelessWidget {
             style: TextStyle(fontSize: 24),
           ),
           const SizedBox(height: 32),
-          CircleAvatar(
-            radius: 40,
-            backgroundImage: NetworkImage(user!.photoURL!),
-          ),
+          // CircleAvatar(
+          //   radius: 40,
+          //   backgroundImage: NetworkImage(user!.photoURL!),
+          // ),
+          // const SizedBox(height: 8),
+          // Text('Name: ${user.displayName!}',
+          //     style: const TextStyle(color: Colors.white, fontSize: 16)),
           const SizedBox(height: 8),
-          Text('Name: ${user.displayName!}',
+          Text('Email: ${user?.email!}',
               style: const TextStyle(color: Colors.white, fontSize: 16)),
           const SizedBox(height: 8),
-          Text('Email: ${user.email!}',
-              style: const TextStyle(color: Colors.white, fontSize: 16)),
-          const SizedBox(height: 8),
-          Text('ID: ${user.uid}',
+          Text('ID: ${user?.uid}',
               style: const TextStyle(color: Colors.white, fontSize: 16)),
           const SizedBox(height: 8)
         ]),

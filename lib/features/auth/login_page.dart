@@ -3,44 +3,29 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:readery/features/auth/google_signin.dart';
-import 'package:readery/routing/onboarding_screen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:readery/routing/root_page.dart';
 import 'package:readery/routing/screens/home_page.dart';
-import 'package:readery/features/auth/logged_in.dart';
 
-//if you encounter errors on the imports I installed firebase plugins through the readery terminal (windows)
+/*
+  Login() -> wait for init and call login form after
+  LoginScreen() -> login form go to the root page
 
-//run in readery terminal
-//flutter pub add firebase_auth
-//flutter pub add firebase_core
-//flutter pub add provider
-//flutter pub add font_awesome_flutter
-//flutter pub add google_sign_in
+  login credentials
+    email: test@hotmail.com
+    password: test123
+*/
 
-//Log in credentials
-//email: test@hotmail.com
-//password: test123
-class SignIn extends StatelessWidget {
-  const SignIn({Key? key}) : super(key: key);
+/* CLASS LOGIN: is called on logging in to init firebase and show
+  loading before the actual login form is shown */
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Homepage(),
-    );
-  }
+  State<Login> createState() => _LoginState();
 }
 
-class Homepage extends StatefulWidget {
-  const Homepage({Key? key}) : super(key: key);
-  @override
-  _HomepageState createState() => _HomepageState();
-}
-
-class _HomepageState extends State<Homepage> {
+class _LoginState extends State<Login> {
   //initializing firebase
-  @override
   Future<FirebaseApp> _initiliazeFirebase() async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
     return firebaseApp;
@@ -64,46 +49,16 @@ class _HomepageState extends State<Homepage> {
   }
 }
 
+//CLASS LOGINSCREEN: the actual login form and function
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
+
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-//This is my account validation to see if the users exist within the database it works but idk how to off the prompt window after it executes.
-  //on line 73 (Navigator.pop(context) this function rather than kill the prompt window it kills the whole login screen and turns it black)
-  //on line 109 is the call function of the showAlertDialog which calls the prompt window
-
-  /* showAlertDialog(BuildContext context) {
-    // set up the button
-    Widget okButton = TextButton(
-      child: const Text("OK"),
-      onPressed: () {
-        Navigator.pop(context);
-      },
-    );
-
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: const Text("Notice"),
-      content: const Text("User does not exist!"),
-      actions: [
-        okButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-*/
-  //Login Function
-  Future<User?> loginin_attempt(
+  static Future<User?> loginAttempt(
       {required String email,
       required String password,
       required BuildContext context}) async {
@@ -114,9 +69,56 @@ class _LoginScreenState extends State<LoginScreen> {
           email: email, password: password);
       user = userCredential.user;
     } on FirebaseAuthException catch (e) {
-      if (e.code == "user-not-found") {
-        print("User does not exist!"); //view terminal for validation
-        //showAlertDialog(context);
+      if (email == "" || password == "") {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('Please fill all fields'),
+          behavior: SnackBarBehavior.floating,
+          action: SnackBarAction(
+              label: 'Dismiss',
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              }),
+        ));
+      } else if (e.code == 'invalid-email') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('Invalid email'),
+          behavior: SnackBarBehavior.floating,
+          action: SnackBarAction(
+              label: 'Dismiss',
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              }),
+        ));
+      } else if (e.code == 'user-not-found') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('User not found'),
+          behavior: SnackBarBehavior.floating,
+          action: SnackBarAction(
+              label: 'Dismiss',
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              }),
+        ));
+      } else if (e.code == 'wrong-password') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('Wrong password'),
+          behavior: SnackBarBehavior.floating,
+          action: SnackBarAction(
+              label: 'Dismiss',
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              }),
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(e.code),
+          behavior: SnackBarBehavior.floating,
+          action: SnackBarAction(
+              label: 'Dismiss',
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              }),
+        ));
       }
     }
     return user;
@@ -125,80 +127,67 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     //controllers
-    TextEditingController _emailController = TextEditingController();
-    TextEditingController _passwordController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.background,
+      ),
+      padding: const EdgeInsets.all(32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Readery",
-            style: TextStyle(
-                color: Colors.black,
-                fontSize: 28.0,
-                fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(
-            height: 44.0,
-          ),
+          SizedBox(height: 350, child: Image.asset('assets/images/hello.png')),
+          Text('Welcome back!',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 16),
           TextField(
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(hintText: "User Email"),
-          ),
-          const SizedBox(
-            height: 26.0,
-          ),
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(), labelText: "Email")),
+          const SizedBox(height: 8),
           TextField(
-            controller: _passwordController,
-            obscureText: true,
-            decoration: const InputDecoration(hintText: "Password"),
-          ),
-          const SizedBox(
-            height: 12.0,
-          ),
-          Container(
-            width: double.infinity,
-            child: RawMaterialButton(
-              fillColor: const Color(0xFF0069FE),
-              elevation: 0.0,
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0)),
-              onPressed: () async {
-                User? user = await loginin_attempt(
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                    context: context);
-                print(user);
-                if (user != null) {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => const RootPage()));
-                }
-              },
-              child: const Text(
-                "Login",
-                style: TextStyle(color: Colors.white, fontSize: 18.0),
-              ),
-            ),
-          ),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-              minimumSize: const Size(double.infinity, 50),
-            ),
-            icon: const FaIcon(FontAwesomeIcons.google, color: Colors.red),
-            label: const Text('Sign in with Google'),
-            onPressed: () {
-              final provider =
-                  Provider.of<GoogleSignInProvider>(context, listen: false);
-              provider.googleLogin();
-            },
-          ),
+              controller: passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(), hintText: "Password")),
+          const SizedBox(height: 16.0),
+          SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                  onPressed: () async {
+                    User? user = await loginAttempt(
+                        email: emailController.text,
+                        password: passwordController.text,
+                        context: context);
+                    print(user);
+                    if (!mounted) return;
+                    if (user != null) {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const CheckStatus()));
+                    }
+                  },
+                  child: const Text("Login"))),
+          SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                  icon: const FaIcon(
+                    FontAwesomeIcons.google,
+                    color: Colors.red,
+                    size: 16,
+                  ),
+                  label: const Text('Sign in with Google'),
+                  onPressed: () {
+                    final provider = Provider.of<GoogleSignInProvider>(context,
+                        listen: false);
+                    provider.googleLogin();
+                  })),
         ],
       ),
     );
