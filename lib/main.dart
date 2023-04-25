@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:readery/constants/colors.dart';
+import 'package:readery/features/auth/edit_page.dart';
 import 'package:readery/features/auth/google_signin.dart';
 import 'package:readery/features/auth/user_profile.dart';
-import 'package:readery/routing/onboarding_screen.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:readery/routing/screens/home_page.dart';
+import 'package:readery/features/auth/signup_page.dart';
 
+import 'package:readery/routing/onboarding_screen.dart';
+import 'package:readery/routing/screens/home_page.dart';
+import 'package:readery/routing/screens/create_rlist.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:readery/routing/screens/library.dart';
 import 'features/auth/login_page.dart';
 
 void main() async {
@@ -32,7 +36,9 @@ class MyApp extends StatelessWidget {
             scaffoldBackgroundColor: Theme.of(context).colorScheme.background,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
-          home: const CheckStatus(),
+          home: CheckStatus(),
         ),
       );
 }
+
+//CheckStatus home
