@@ -2,31 +2,39 @@ import 'package:readery/features/novels/chapter.dart';
 import 'package:readery/features/novels/genre.dart';
 
 class Novel {
-  final int novelId;
-  final String title;
+  final String altTitle;
   final String author;
-  final List<Genre> genreList;
+  final String coverUrl;
   final String description;
+  final int novelId;
+  final String source;
   final String status;
+  final String title;
+  //will be generated when details is shown
+  final List<Genre> genreList;
   final List<Chapter> chaptersList;
 
-  Novel(this.novelId, this.title, this.author, this.genreList, this.description,
-      this.status, this.chaptersList);
+  Novel(
+      {required this.altTitle,
+      required this.author,
+      required this.coverUrl,
+      required this.description,
+      required this.novelId,
+      required this.source,
+      required this.status,
+      required this.title,
+      this.genreList = const [],
+      this.chaptersList = const []});
+
+  //for viewing novels list
+  //creates a novel object :D
+  static fromJson(Map<String, dynamic> json) => Novel(
+      altTitle: json["altTitle"],
+      author: json["author"],
+      coverUrl: json["coverUrl"],
+      description: json["description"],
+      novelId: json["novelId"],
+      source: json["source"],
+      status: json["status"],
+      title: json["title"]);
 }
-
-Genre genre1 = Genre(1, "Action", [1, 2]);
-Genre genre2 = Genre(2, "Adventure", [1, 2]);
-List<Genre> genresList = [genre1, genre2];
-
-List<Novel> novelList = [
-  Novel(1, 'Hello', 'Charles', genresList, 'lorem ipsum dolor sit amet',
-      'ongoing', [
-    Chapter(1, "Chapter 1", "Lorem ipsum dolor sit amet.", 1),
-    Chapter(2, "Chapter 2", "Consectetur adipiscing elit.", 1)
-  ]),
-  Novel(2, 'World', 'Tom', genresList, 'lorem lorem ipsum ipsum dolor',
-      'finished', [
-    Chapter(1, "Chapter 1", "Lorem ipsum dolor sit amet.", 2),
-    Chapter(2, "Chapter 2", "Consectetur adipiscing elit.", 2)
-  ])
-];

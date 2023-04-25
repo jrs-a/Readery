@@ -10,7 +10,7 @@ import 'package:readery/routing/screens/home_page.dart';
   Login() -> wait for init and call login form after
   LoginScreen() -> login form go to the root page
 
-  login credentials
+  login credentials for testing
     email: test@hotmail.com
     password: test123
 */
