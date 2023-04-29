@@ -9,13 +9,14 @@ import 'package:readery/routing/screens/create_rlist.dart';
 //delete -> deletes the clicked list item (Note: docid is the referenced docid assigned to the list item)
 //update -> updates the field 'name' with a new name (Note: docid is the referenced docid assigned to the list item)
 
-class UpdateRlist extends StatefulWidget {
+class EditForum extends StatefulWidget {
   @override
-  _UpdateRlistState createState() => _UpdateRlistState();
+  _EditForum createState() => _EditForum();
 }
 
-class _UpdateRlistState extends State<UpdateRlist> {
-  var newRListnameController = TextEditingController();
+class _EditForum extends State<EditForum> {
+  var newTitleController = TextEditingController();
+  var newBodyController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class _UpdateRlistState extends State<UpdateRlist> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
-          "Edit Listing Page",
+          "Edit Forum Page",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
@@ -40,8 +41,13 @@ class _UpdateRlistState extends State<UpdateRlist> {
               const SizedBox(
                 height: 20,
               ),
-              reusableTextField("New Reading List Name", Icons.person_outline,
-                  false, newRListnameController),
+              reusableTextField("New Forum Name", Icons.person_outline, false,
+                  newTitleController),
+              const SizedBox(
+                height: 20,
+              ),
+              reusableTextField(
+                  "New Body", Icons.person_outline, false, newBodyController),
               const SizedBox(
                 height: 20,
               ),
@@ -50,7 +56,8 @@ class _UpdateRlistState extends State<UpdateRlist> {
                 children: [
                   OutlinedButton(
                     onPressed: () {
-                      newRListnameController.clear();
+                      newBodyController.clear();
+                      newTitleController.clear();
                     },
                     child: const Text('Reset',
                         style: TextStyle(
@@ -64,19 +71,19 @@ class _UpdateRlistState extends State<UpdateRlist> {
                   ),
                   ElevatedButton(
                     onPressed: () async {
-                      if (newRListnameController.value.text.isNotEmpty) {
-                        try {
-                          final docUser = FirebaseFirestore.instance
-                              .collection('ReadingList')
-                              .doc(
-                                  'tmAI6BniEEK1k1Ns9jhZ'); //replace this w docid variable after referencing
-
-                          docUser.update({'name': newRListnameController.text});
-                          print('Update Succesfully');
-                        } catch (e) {
-                          if (kDebugMode) {
-                            print(e);
-                          }
+                      try {
+                        final docUser = FirebaseFirestore.instance
+                            .collection('Forum')
+                            .doc(
+                                'OgVcCaTeqyic7I0BSH2x'); //replace this w docid variable after referencing
+                        docUser.update({
+                          'Title': newTitleController.text,
+                          'Body': newBodyController.text
+                        });
+                        print('Update Succesfully');
+                      } catch (e) {
+                        if (kDebugMode) {
+                          print(e);
                         }
                       }
                     },

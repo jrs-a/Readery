@@ -6,11 +6,11 @@ import 'package:readery/features/auth/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:readery/features/auth/user_profile.dart';
 
-class ReadingListPage extends StatefulWidget {
-  const ReadingListPage({super.key});
+class CreateReadingListPage extends StatefulWidget {
+  const CreateReadingListPage({super.key});
 
   @override
-  State<ReadingListPage> createState() => _ReadingListPage();
+  State<CreateReadingListPage> createState() => _CreateReadingListPage();
 }
 
 User? user = FirebaseAuth.instance.currentUser;
@@ -21,7 +21,7 @@ String? uid = user?.uid;
 //findDocId_RL() -> finds reading list document id
 // AddList() -> adds the reading list w their own unique id and current userID, also adds input reading list name
 
-class _ReadingListPage extends State<ReadingListPage> {
+class _CreateReadingListPage extends State<CreateReadingListPage> {
   TextEditingController r_listName = TextEditingController();
 
   @override

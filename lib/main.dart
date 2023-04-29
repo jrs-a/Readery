@@ -14,6 +14,7 @@ import 'package:readery/routing/screens/library.dart';
 import 'features/auth/login_page.dart';
 
 import 'package:readery/routing/screens/update_delete_rlist.dart';
+import 'package:readery/routing/screens/forums.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,9 +39,9 @@ class MyApp extends StatelessWidget {
             scaffoldBackgroundColor: Theme.of(context).colorScheme.background,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
-          home: UpdateRlist(),
+          home: CheckStatus(),
         ),
       );
 }
 
-//CheckStatus home
+//CheckStatus homeSSS
