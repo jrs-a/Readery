@@ -18,8 +18,26 @@ class UserProfile extends StatelessWidget {
 
   Future<void> deleteUser(String? email, String? userId) async {
     try {
-      await firebaseFirestore.collection('users').doc(userId).delete();
       await firebaseAuth.currentUser?.delete();
+
+      QuerySnapshot querySnapshot1 = await FirebaseFirestore.instance
+          .collection('ReadingList')
+          .where('UserId', isEqualTo: userId)
+          .get();
+
+      for (QueryDocumentSnapshot docSnapshot in querySnapshot1.docs) {
+        await docSnapshot.reference.delete();
+      }
+
+      QuerySnapshot querySnapshot2 = await FirebaseFirestore.instance
+          .collection('UserData')
+          .where('UserId', isEqualTo: userId)
+          .get();
+
+      for (QueryDocumentSnapshot docSnapshot in querySnapshot2.docs) {
+        await docSnapshot.reference.delete();
+      }
+
       print("user deleted succesfully!");
     } catch (e) {
       print(e);

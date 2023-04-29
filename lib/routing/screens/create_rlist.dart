@@ -16,8 +16,11 @@ class ReadingListPage extends StatefulWidget {
 User? user = FirebaseAuth.instance.currentUser;
 String? uid = user?.uid;
 
-//createUser() -> creates the user
-//
+//AddListToUserData() -> Adds the reading list to user data
+//findDocId_UD() -> find user data document id
+//findDocId_RL() -> finds reading list document id
+// AddList() -> adds the reading list w their own unique id and current userID, also adds input reading list name
+
 class _ReadingListPage extends State<ReadingListPage> {
   TextEditingController r_listName = TextEditingController();
 
@@ -54,18 +57,17 @@ class _ReadingListPage extends State<ReadingListPage> {
                     // final myListId = AddList(r_listName.text);
                     //print('my document id is: $myListId');
 
-                    final docId_rList = await _searchForDocIdInReadingList(
-                        'ReadingList', 'UserId', uid);
+                    final docId_rList =
+                        await findDocID_RL('ReadingList', 'UserId', uid);
                     // var docRlist = docId_rList.toString();
 
-                    final docId = await _searchForDocIdInUserData(
-                        'UserData', 'UserId', uid);
+                    final docId = await findDocId_UD('UserData', 'UserId', uid);
 
                     if (docId != null) {
-                      createUser(docId_rList, docId, 'UserData');
-                      print("Create Users work");
+                      AddListToUserData(docId_rList, docId, 'UserData');
+                      print("reading list succesfully added");
                     } else if (docId != uid) {
-                      print("Creat User Does not Work!");
+                      print("Error userid does not exist");
                     } else {
                       print('Error');
                     }
@@ -85,7 +87,7 @@ class _ReadingListPage extends State<ReadingListPage> {
   }
 
 //create  user
-  Future createUser(
+  Future AddListToUserData(
       List<String> inputList, String docId, String collectionPath) async {
     final collectionRef = FirebaseFirestore.instance.collection(collectionPath);
     final documentRef = collectionRef.doc(docId);
@@ -94,21 +96,21 @@ class _ReadingListPage extends State<ReadingListPage> {
     final List<dynamic> currentValues =
         snapshot.data()?['ReadingListsId'] ?? [];
 
-    print('This is create user');
-    // If the input already exists in the array
     for (var input in inputList) {
       if (currentValues.contains(input)) {
+        print('$input already exist!');
         return;
       }
       await documentRef.update({
         'ReadingListsId': FieldValue.arrayUnion([input])
       });
+
       print('my input is $input');
     }
   }
 }
 
-Future<String?> _searchForDocIdInUserData(
+Future<String?> findDocId_UD(
     String collectionPath, String field, dynamic value) async {
   final collectionRef = FirebaseFirestore.instance.collection(collectionPath);
   final snapshot = await collectionRef.get();
@@ -125,7 +127,7 @@ Future<String?> _searchForDocIdInUserData(
   return null;
 }
 
-Future<List<String>> _searchForDocIdInReadingList(
+Future<List<String>> findDocID_RL(
     String collectionPath, String field, dynamic value) async {
   final collectionRef = FirebaseFirestore.instance.collection(collectionPath);
   final snapshot = await collectionRef.get();
@@ -140,6 +142,23 @@ Future<List<String>> _searchForDocIdInReadingList(
     }
   }
   return _docs;
+}
+
+Future<String> AddList(String input) async {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  CollectionReference inputsCollection = firestore.collection('ReadingList');
+
+  DocumentReference newInputRef = await inputsCollection.add({
+    'name': input,
+    'UserId': uid,
+  });
+
+  String docId = newInputRef.id;
+
+  if (docId == null) {
+    return 'null';
+  }
+  return docId;
 }
 
 TextField reusableTextField(String text, IconData icon, bool isPasswordType,
@@ -168,21 +187,4 @@ TextField reusableTextField(String text, IconData icon, bool isPasswordType,
         ? TextInputType.visiblePassword
         : TextInputType.emailAddress,
   );
-}
-
-Future<String> AddList(String input) async {
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  CollectionReference inputsCollection = firestore.collection('ReadingList');
-
-  DocumentReference newInputRef = await inputsCollection.add({
-    'ReadingListName': input,
-    'UserId': uid,
-  });
-
-  String docId = newInputRef.id;
-
-  if (docId == null) {
-    return 'null';
-  }
-  return docId;
 }

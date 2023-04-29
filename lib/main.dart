@@ -13,6 +13,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:readery/routing/screens/library.dart';
 import 'features/auth/login_page.dart';
 
+import 'package:readery/routing/screens/update_delete_rlist.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -36,7 +38,7 @@ class MyApp extends StatelessWidget {
             scaffoldBackgroundColor: Theme.of(context).colorScheme.background,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
-          home: CheckStatus(),
+          home: UpdateRlist(),
         ),
       );
 }
