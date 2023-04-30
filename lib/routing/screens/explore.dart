@@ -12,7 +12,7 @@ class ExplorePage extends StatefulWidget {
 }
 
 class _ExplorePageState extends State<ExplorePage> {
-  // final queryNovel = FirebaseFirestore.instance.collection('Novel');
+  final queryNovel = FirebaseFirestore.instance.collection('Novel');
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -20,53 +20,35 @@ class _ExplorePageState extends State<ExplorePage> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
       ),
-      // child: FirestoreQueryBuilder<Novel>(
-      //   query: queryNovel,
-      //   pageSize: 5,
-      //   builder: (context, snapshot, _) {
-      //     if (snapshot.hasError) {
-      //       return Text('Something went wrong! ${snapshot.error}');
-      //     } else if (snapshot.hasData) {
-      //       // final List<Novel> novels = snapshot.data!;
-      //       return GridView.builder(
-      //         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-      //             maxCrossAxisExtent: 150,
-      //             childAspectRatio: 1 / 2,
-      //             mainAxisSpacing: 8,
-      //             crossAxisSpacing: 8),
-      //         itemCount: snapshot.docs.length,
-      //         itemBuilder: (context, index) {
-      //           // return novels.map(buildNovels).toList()[index];
-      //           final novel = snapshot.docs[index].data();
-      //           return buildNovels(novel);
-      //         },
-      //       );
-      //     } else {
-      //       return const Center(child: CircularProgressIndicator());
-      //     }
-      //   },
-      // ),
-      child: StreamBuilder<List<Novel>>(
-          stream: readNovels(),
-          builder: ((context, snapshot) {
+      child: FirestoreQueryBuilder<Map<String, dynamic>>(
+          query: queryNovel,
+          pageSize: 20,
+          builder: (context, snapshot, _) {
             if (snapshot.hasError) {
               return Text('Something went wrong! ${snapshot.error}');
             } else if (snapshot.hasData) {
-              final List<Novel> novels = snapshot.data!;
               return GridView.builder(
+                itemCount: snapshot.docs.length,
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 150,
                     childAspectRatio: 1 / 2,
                     mainAxisSpacing: 8,
                     crossAxisSpacing: 8),
                 itemBuilder: (context, index) {
-                  return novels.map(buildNovels).toList()[index];
+                  if (index + 1 == snapshot.docs.length) {
+                    debugPrint(snapshot.docs.length.toString());
+                  }
+                  if (snapshot.hasMore && index + 1 == snapshot.docs.length) {
+                    snapshot.fetchMore();
+                  }
+                  final novel = snapshot.docs[index].data();
+                  return buildNovels(novel);
                 },
               );
             } else {
               return const Center(child: CircularProgressIndicator());
             }
-          })),
+          }),
     );
   }
 
@@ -77,13 +59,13 @@ class _ExplorePageState extends State<ExplorePage> {
           .map<Novel>((doc) => Novel.fromJson(doc.data()))
           .toList());
 
-  Widget buildNovels(Novel novel) => GridTile(
+  Widget buildNovels(dynamic novel) => GridTile(
         child: InkWell(
           onTap: () {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => NovelInfo(novel.novelId)));
+                    builder: (context) => NovelInfo(novel['novelId'])));
           },
           child: Container(
             decoration: BoxDecoration(
@@ -95,19 +77,16 @@ class _ExplorePageState extends State<ExplorePage> {
             child: Column(children: [
               ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.network(novel.coverUrl,
-                      fit: BoxFit.cover, height: 185)),
+                  child: Image.network(novel['coverUrl'],
+                      fit: BoxFit.cover, height: 180)),
               Container(
                   padding: const EdgeInsets.all(4),
                   child: Text(
                       maxLines: 3,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          height: 1.15,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500),
-                      novel.title))
+                      style: Theme.of(context).textTheme.bodySmall,
+                      '${novel['title']}'))
             ]),
           ),
         ),
