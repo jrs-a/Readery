@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:readery/features/auth/google_signin.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:readery/features/auth/signup_page.dart';
 import 'package:readery/routing/screens/home_page.dart';
 
 /*
@@ -130,6 +131,27 @@ class _LoginScreenState extends State<LoginScreen> {
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
 
+    Row signUpOption() {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("Dont have an account?",
+              style: TextStyle(color: Colors.black)),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SignupPage()));
+            },
+            child: const Text(
+              " Sign up",
+              style:
+                  TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
+            ),
+          )
+        ],
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
@@ -188,6 +210,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         listen: false);
                     provider.googleLogin();
                   })),
+          const SizedBox(
+            height: 16,
+          ),
+          signUpOption()
         ],
       ),
     );
