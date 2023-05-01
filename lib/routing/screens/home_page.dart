@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:readery/routing/root_page.dart';
 
 import '../../features/auth/login_page.dart';
-import '../../features/auth/user_profile.dart';
 
 /*
   checkStatus() - checks status if logged in for redirection
@@ -139,15 +138,6 @@ class WidgetNotif extends StatelessWidget {
                 child: IconButton(
                   icon: const Icon(Icons.notifications_none_outlined),
                   onPressed: () {},
-                )),
-            SizedBox(
-                width: 40,
-                child: IconButton(
-                  icon: const Icon(Icons.person_2_outlined),
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => UserProfile()));
-                  },
                 )),
           ]),
     );
