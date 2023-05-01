@@ -1,9 +1,12 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:readery/features/read%20data/get_forum_data.dart';
 import 'package:readery/routing/screens/create_forum.dart';
 import 'package:readery/routing/screens/my_forum.dart';
+import 'package:readery/routing/screens/forums_comment.dart';
 
 class ForumsPage extends StatefulWidget {
   const ForumsPage({Key? key}) : super(key: key);
@@ -22,15 +25,6 @@ class _ForumsPageState extends State<ForumsPage> {
         .then((snapshot) => snapshot.docs.forEach((doc) {
               docIDs.add(doc.id);
               print('Found document with ${doc.id}');
-
-              /* specific user
-              final fieldValue = doc.data()[field];
-              if (fieldValue == value) {
-                print(
-                    'Found document with $field the value is $value: ${doc.id}');
-                docIDs.add(doc.id);
-              }
-          */
             }));
   }
 
@@ -72,6 +66,19 @@ class _ForumsPageState extends State<ForumsPage> {
                     child: ListTile(
                       title: GetForumData(documentId: docIDs[index]),
                       tileColor: Colors.grey[200],
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => CommentsScreen()));
+                            },
+                            icon: const Icon(Icons.chat_bubble),
+                            color: Colors.orange,
+                          )
+                        ],
+                      ),
                     ),
                   );
                 },

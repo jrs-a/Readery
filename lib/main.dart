@@ -15,6 +15,7 @@ import 'features/auth/login_page.dart';
 
 import 'package:readery/routing/screens/update_delete_rlist.dart';
 import 'package:readery/routing/screens/forums.dart';
+import 'package:readery/routing/screens/forums_comment.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

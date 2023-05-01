@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:readery/features/auth/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:readery/features/auth/user_profile.dart';
+import 'package:readery/routing/screens/library.dart';
 
 class CreateReadingListPage extends StatefulWidget {
   const CreateReadingListPage({super.key});
@@ -54,18 +55,15 @@ class _CreateReadingListPage extends State<CreateReadingListPage> {
               ),
               ElevatedButton(
                   onPressed: () async {
-                    // final myListId = AddList(r_listName.text);
-                    //print('my document id is: $myListId');
-
                     final docId_rList =
                         await findDocID_RL('ReadingList', 'UserId', uid);
-                    // var docRlist = docId_rList.toString();
-
                     final docId = await findDocId_UD('UserData', 'UserId', uid);
 
                     if (docId != null) {
                       AddListToUserData(docId_rList, docId, 'UserData');
-                      print("reading list succesfully added");
+                      AddList(r_listName.text, docId, 'UserData');
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const LibraryPage()));
                     } else if (docId != uid) {
                       print("Error userid does not exist");
                     } else {
@@ -104,7 +102,6 @@ class _CreateReadingListPage extends State<CreateReadingListPage> {
       await documentRef.update({
         'ReadingListsId': FieldValue.arrayUnion([input])
       });
-
       print('my input is $input');
     }
   }
@@ -144,7 +141,7 @@ Future<List<String>> findDocID_RL(
   return _docs;
 }
 
-Future<String> AddList(String input) async {
+Future<String> AddList(String input, String doc_Rlist, String colpath) async {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   CollectionReference inputsCollection = firestore.collection('ReadingList');
 
@@ -152,12 +149,18 @@ Future<String> AddList(String input) async {
     'name': input,
     'UserId': uid,
   });
-
   String docId = newInputRef.id;
+  CollectionReference usersRef = FirebaseFirestore.instance.collection(colpath);
+  DocumentReference userDocRef = usersRef.doc(doc_Rlist);
+
+  userDocRef.update({
+    'ReadingListsId': FieldValue.arrayUnion([docId])
+  });
 
   if (docId == null) {
     return 'null';
   }
+
   return docId;
 }
 

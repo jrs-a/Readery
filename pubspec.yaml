@@ -36,6 +36,7 @@ dependencies:
   google_sign_in: ^6.1.0
   page_transition: ^2.0.9
   provider: ^6.0.5
+  comment_box: ^0.0.18
 
 #firebase core and auth
 firebase_core: ^2.9.0
