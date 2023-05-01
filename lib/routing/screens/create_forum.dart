@@ -86,6 +86,11 @@ class _CreateForum extends State<CreateForum> {
     print("Added Sucessfuly");
     String docId = newInputRef.id;
 
+    CollectionReference newInputsCollection = firestore.collection('Comments');
+    final parentDocument = newInputsCollection.doc(docId);
+    final newDocRef = parentDocument.collection('comments');
+    await newDocRef.add({});
+
     if (docId == null) {
       return 'null';
     }
