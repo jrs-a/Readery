@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:readery/routing/root_page.dart';
@@ -66,8 +67,12 @@ class _HomePageState extends State<HomePage> {
 }
 
 //searchbar
-class WidgetSearch extends StatelessWidget {
-  const WidgetSearch({
+/*Changes on the search bar
+- Stateful instead of Stateless
+- created a new state
+these are necessary to use setState function  */
+class WidgetSearch extends StatefulWidget {
+  WidgetSearch({
     super.key,
     required this.size,
   });
@@ -75,35 +80,137 @@ class WidgetSearch extends StatelessWidget {
   final Size size;
 
   @override
+  State<StatefulWidget> createState() => _WidgetSearchState();
+}
+
+class _WidgetSearchState extends State<WidgetSearch> {
+  String name = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Card(
+          child: TextField(
+            decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.search), hintText: 'Search...'),
+            onChanged: (val) {
+              name = val;
+            },
+          ),
+        ),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('Novel').snapshots(),
+        builder: (context, snapshots) {
+          return (snapshots.connectionState == ConnectionState.waiting)
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : ListView.builder(
+                  itemCount: snapshots.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    var data = snapshots.data!.docs[index].data()
+                        as Map<String, dynamic>;
+
+                    if (name.isEmpty) {
+                      return ListTile(
+                        title: Text(
+                          data['title'],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              color: Colors.black54,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          data['author'],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              color: Colors.black54,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(data['coverUrl'],
+                                fit: BoxFit.cover, height: 180)),
+                      );
+                    }
+                    if (data['title']
+                        .toString()
+                        .startsWith(name.toLowerCase())) {
+                      return ListTile(
+                        title: Text(
+                          data['title'],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              color: Colors.black54,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          data['author'],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              color: Colors.black54,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(data['coverUrl'],
+                                fit: BoxFit.cover, height: 180)),
+                      );
+                    }
+                    return Container();
+                  });
+        },
+      ),
+    );
+  }
+//original design
+/*  @override
   Widget build(BuildContext context) {
     return Flexible(
-        //search
-        child: Container(
-      margin: const EdgeInsets.only(right: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      // width: size.width * 0.6,
-      decoration: BoxDecoration(
-          color: const Color(0xFFF1E9E7),
-          borderRadius: BorderRadius.circular(25),
-          border: Border.all(color: const Color(0xFFF1E9E7), width: 1.5)),
-      child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Icon(Icons.search_outlined,
-                    color: Theme.of(context).colorScheme.onSurface)),
-            const Expanded(
-                //TODO: onclick goto full page search view
+      //search
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        // width: size.width * 0.6,
+        decoration: BoxDecoration(
+            color: const Color(0xFFF1E9E7),
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(color: const Color(0xFFF1E9E7), width: 1.5)),
+        child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Icon(Icons.search_outlined,
+                      color: Theme.of(context).colorScheme.onSurface)),
+              Expanded(
                 child: TextField(
-              showCursor: false,
-              decoration: InputDecoration(
-                  border: InputBorder.none, focusedBorder: InputBorder.none),
-            )),
-          ]),
-    ));
-  }
+                  showCursor: false,
+                  decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      focusedBorder: InputBorder.none),
+                  onChanged: (val) {
+                    setState(() {
+                      name = val;
+                    });
+                  },
+                ),
+              ),
+            ]),
+      ),
+    );
+  }*/
 }
 
 //notifications
