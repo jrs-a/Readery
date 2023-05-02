@@ -55,7 +55,7 @@ class _CommentsScreen extends State<CommentsScreen> {
   Future getDocId() async {
     final collectionRef = FirebaseFirestore.instance.collection('Comments');
     final subColRef = collectionRef
-        .doc('CJpenWZnvkiHGGz8iM1i') //replace this w referenced doc id btw
+        .doc('OgVcCaTeqyic7I0BSH2x') //replace this w referenced doc id btw
         .collection('comments');
 
     await subColRef.get().then((snapshot) => snapshot.docs.forEach((doc) {
@@ -117,7 +117,7 @@ Future<String> Create_AddComment(
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   CollectionReference newInputsCollection = firestore.collection('Comments');
   final parentDocument = newInputsCollection
-      .doc('CJpenWZnvkiHGGz8iM1i'); //replace this with forum document id
+      .doc('OgVcCaTeqyic7I0BSH2x'); //replace this with forum document id
 
   final newDocRef = parentDocument.collection('comments');
 
@@ -186,7 +186,7 @@ Future<String?> findSubDoc(String collectionPath, String subColPath,
     String field, dynamic value) async {
   final collectionRef = FirebaseFirestore.instance.collection(collectionPath);
   final subColRef =
-      collectionRef.doc('CJpenWZnvkiHGGz8iM1i').collection(subColPath);
+      collectionRef.doc('OgVcCaTeqyic7I0BSH2x').collection(subColPath);
 
   final snapshot = await subColRef.get();
   for (final doc in snapshot.docs) {

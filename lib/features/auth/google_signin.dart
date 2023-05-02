@@ -1,9 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+/*
+  GoogleSignInProvider class
+  googleLogin() - google login functionality
+  signOut() - sigout functionality
+*/
+
 class GoogleSignInProvider extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();
+  final db = FirebaseFirestore.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   GoogleSignInAccount? _user;
 
@@ -25,7 +34,14 @@ class GoogleSignInProvider extends ChangeNotifier {
         idToken: googleAuth.idToken,
       );
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      await FirebaseAuth.instance
+          .signInWithCredential(credential)
+          .whenComplete(() async {
+        await db
+            .collection('UserData')
+            .doc(auth.currentUser?.uid)
+            .set({"displayName": _user?.email});
+      });
     } catch (e) {
       print(e.toString());
     }

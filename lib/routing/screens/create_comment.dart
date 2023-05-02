@@ -99,7 +99,7 @@ class _CreateComment extends State<CreateComment> {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     CollectionReference newInputsCollection = firestore.collection('Comments');
     final parentDocument = newInputsCollection
-        .doc('CJpenWZnvkiHGGz8iM1i'); //replace this with forum document id
+        .doc('OgVcCaTeqyic7I0BSH2x'); //replace this with forum document id
 
     final newDocRef = parentDocument.collection('comments');
 

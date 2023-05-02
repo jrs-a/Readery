@@ -14,7 +14,7 @@ class GetCommentData extends StatelessWidget {
     CollectionReference collectionRef =
         FirebaseFirestore.instance.collection('Comments');
     final subColRef =
-        collectionRef.doc('CJpenWZnvkiHGGz8iM1i').collection('comments');
+        collectionRef.doc('OgVcCaTeqyic7I0BSH2x').collection('comments');
 
     return FutureBuilder<DocumentSnapshot>(
       future: subColRef.doc(documentId).get(),

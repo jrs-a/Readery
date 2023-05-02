@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -43,18 +41,30 @@ class _LibraryPageState extends State<LibraryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Library'),
-        actions: [
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const CreateReadingListPage()));
-            },
-            child: const Icon(Icons.add),
-          )
-        ],
-      ),
+      extendBodyBehindAppBar: true,
+      backgroundColor: Theme.of(context).colorScheme.background,
+      appBar: PreferredSize(
+          preferredSize: const Size(double.infinity, 100),
+          child: Container(
+              padding: const EdgeInsets.all(16),
+              child: Stack(children: [
+                AppBar(
+                    backgroundColor: Colors.transparent,
+                    scrolledUnderElevation: 0,
+                    surfaceTintColor: Colors.transparent,
+                    actions: [
+                      OutlinedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const CreateReadingListPage()));
+                          },
+                          icon: const Icon(Icons.add_rounded),
+                          label: const Text('New list'))
+                    ])
+              ]))),
       body: Center(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
