@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:readery/features/read%20data/get_myforum.dart';
-import 'package:readery/routing/screens/create_rlist.dart';
+import 'package:readery/features/readinglist/create_rlist.dart';
 import 'package:readery/routing/screens/up_del_myforum.dart';
 
 //collection references

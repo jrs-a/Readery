@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:readery/features/auth/login_page.dart';
-import 'package:readery/routing/screens/create_rlist.dart';
+import 'package:readery/features/readinglist/create_rlist.dart';
 
 //delete -> deletes the clicked list item (Note: docid is the referenced docid assigned to the list item)
 //update -> updates the field 'name' with a new name (Note: docid is the referenced docid assigned to the list item)

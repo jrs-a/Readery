@@ -147,19 +147,18 @@ class _CreateReadingListPage extends State<CreateReadingListPage> {
   TextButton widgetButtonCreateList(BuildContext context) {
     return TextButton(
         onPressed: () async {
+          //gets the readinglists of the user
           final docId_rList = await findDocID_RL('ReadingList', 'UserId', uid);
-          // final docId = await findDocId_UD('UserData', 'UserId', uid);
 
-          if (docId != null) {
-            addListToUserData(docId_rList, docId, 'UserData');
-            AddList(r_listName.text, docId, 'UserData');
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const LibraryPage()));
-          } else if (docId != uid) {
-            print("Error userid does not exist");
-          } else {
-            print('Error');
-          }
+          //for getting the doc id of UserData item of current user
+          // final docId = await findDocId_UD('UserData', 'UserId', uid);
+          final docId = user?.uid.toString();
+
+          //add new list to userdata
+          addListToUserData(docId_rList, docId, 'UserData');
+
+          AddList(r_listName.text, docId, 'UserData', novelsList);
+          Navigator.of(context).pop(context);
         },
         child: const Text('CREATE LIST'));
   }
@@ -175,34 +174,35 @@ class _CreateReadingListPage extends State<CreateReadingListPage> {
         snapshot.data()?['ReadingListsId'] ?? [];
 
     for (var input in inputList) {
-      if (currentValues.contains(input)) {
+      if (!currentValues.contains(input)) {
+        await documentRef.update({
+          'ReadingListsId': FieldValue.arrayUnion([input])
+        });
+        print('my input is $input');
+      } else {
         print('$input already exist!');
-        return;
+        // return;
       }
-      await documentRef.update({
-        'ReadingListsId': FieldValue.arrayUnion([input])
-      });
-      print('my input is $input');
     }
   }
 }
 
-// Future<String?> findDocId_UD(
-//     String collectionPath, String field, dynamic value) async {
-//   final collectionRef = FirebaseFirestore.instance.collection(collectionPath);
-//   final snapshot = await collectionRef.get();
+Future<String?> findDocId_UD(
+    String collectionPath, String field, dynamic value) async {
+  final collectionRef = FirebaseFirestore.instance.collection(collectionPath);
+  final snapshot = await collectionRef.get();
 
-//   for (final doc in snapshot.docs) {
-//     final fieldValue = doc.data()[field];
+  for (final doc in snapshot.docs) {
+    final fieldValue = doc.data()[field];
 
-//     if (fieldValue == value) {
-//       print('Found document with $field the value is $value: ${doc.id}');
-//       return doc.id;
-//     }
-//   }
-//   print('Could not find any document with the $field and value of $value');
-//   return null;
-// }
+    if (fieldValue == value) {
+      print('Found document with $field the value is $value: ${doc.id}');
+      return doc.id;
+    }
+  }
+  print('Could not find any document with the $field and value of $value');
+  return null;
+}
 
 Future<List<String>> findDocID_RL(
     String collectionPath, String field, dynamic value) async {
@@ -221,14 +221,13 @@ Future<List<String>> findDocID_RL(
   return _docs;
 }
 
-Future<String> AddList(String input, String doc_Rlist, String colpath) async {
+Future<String> AddList(
+    String input, doc_Rlist, String colpath, novelsList) async {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   CollectionReference inputsCollection = firestore.collection('ReadingList');
 
-  DocumentReference newInputRef = await inputsCollection.add({
-    'name': input,
-    'UserId': uid,
-  });
+  DocumentReference newInputRef = await inputsCollection
+      .add({'name': input, 'UserId': uid, 'Novels': novelsList});
   String docId = newInputRef.id;
   CollectionReference usersRef = FirebaseFirestore.instance.collection(colpath);
   DocumentReference userDocRef = usersRef.doc(doc_Rlist);

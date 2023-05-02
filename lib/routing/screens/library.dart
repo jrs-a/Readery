@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:readery/features/read%20data/get_RL_name.dart';
-import 'package:readery/routing/screens/create_rlist.dart';
+import 'package:readery/features/readinglist/get_RL_name.dart';
+import 'package:readery/features/readinglist/create_rlist.dart';
+import 'package:readery/features/readinglist/list_novels.dart';
 import 'package:readery/routing/screens/update_delete_rlist.dart';
 
 //collection references
@@ -43,77 +44,88 @@ class _LibraryPageState extends State<LibraryPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: PreferredSize(
-          preferredSize: const Size(double.infinity, 100),
+      body: SingleChildScrollView(
           child: Container(
-              padding: const EdgeInsets.all(16),
-              child: Stack(children: [
-                AppBar(
-                    backgroundColor: Colors.transparent,
-                    scrolledUnderElevation: 0,
-                    surfaceTintColor: Colors.transparent,
-                    actions: [
-                      OutlinedButton.icon(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CreateReadingListPage()));
-                          },
-                          icon: const Icon(Icons.add_rounded),
-                          label: const Text('New list'))
-                    ])
-              ]))),
-      body: Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-              child: FutureBuilder(
-            future: getDocId('UserId', uid),
-            builder: ((context, snapshot) {
-              return ListView.builder(
-                itemCount: docIDs.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      title: GetReadingListName(documentId: docIDs[index]),
-                      tileColor: Colors.grey[200],
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 80),
+                  Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          IconButton(
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => UpdateRlist()));
-                            },
-                            icon: const Icon(Icons.edit),
-                            color: Colors.indigo,
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              final docUser = FirebaseFirestore.instance
-                                  .collection('ReadingList')
-                                  .doc(
-                                      'tmAI6BniEEK1k1Ns9jhZ'); //replace this w docid variable after referencing
-
-                              docUser.delete();
-                            },
-                            icon: const Icon(Icons.delete),
-                            color: Colors.red,
-                          ),
+                          Text('Your reading lists',
+                              style: Theme.of(context).textTheme.titleLarge),
+                          OutlinedButton.icon(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const CreateReadingListPage()));
+                              },
+                              icon: const Icon(Icons.add_rounded),
+                              label: const Text('New list'))
                         ],
-                      ),
-                    ),
-                  );
-                },
-              );
-            }),
-          ))
-        ],
-      )),
+                      )),
+                  const SizedBox(height: 16),
+                  MediaQuery.removePadding(
+                      context: context,
+                      removeTop: true,
+                      child: FutureBuilder(
+                        future: getDocId('UserId', uid),
+                        builder: ((context, snapshot) {
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: docIDs.length,
+                            itemBuilder: (context, index) {
+                              return Card(
+                                child: ListTile(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ListNovels(
+                                                docId: docIDs[index])));
+                                  },
+                                  title: GetReadingListName(
+                                      documentId: docIDs[index]),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      UpdateRlist()));
+                                        },
+                                        icon: const Icon(Icons.edit_outlined),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          final docUser = FirebaseFirestore
+                                              .instance
+                                              .collection('ReadingList')
+                                              .doc(docIDs[index]);
+                                          docUser.delete();
+                                        },
+                                        icon: const Icon(Icons.delete_outline),
+                                        color: Colors.red,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }),
+                      ))
+                ],
+              ))),
     );
   }
 }
