@@ -10,6 +10,10 @@ import 'package:readery/features/readinglist/create_rlist.dart';
 //update -> updates the field 'name' with a new name (Note: docid is the referenced docid assigned to the list item)
 
 class UpdateRlist extends StatefulWidget {
+  final String docId;
+
+  const UpdateRlist({super.key, required this.docId});
+
   @override
   _UpdateRlistState createState() => _UpdateRlistState();
 }

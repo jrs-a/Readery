@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:readery/features/read%20data/get_comments.dart';
-import 'package:readery/routing/screens/create_comment.dart';
-import 'package:readery/routing/screens/my_forum.dart';
+import 'package:readery/features/forums/create_comment.dart';
+import 'package:readery/features/forums/my_forum.dart';
 
 /*
 

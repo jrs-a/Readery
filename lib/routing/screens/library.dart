@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:readery/features/readinglist/get_RL_name.dart';
 import 'package:readery/features/readinglist/create_rlist.dart';
 import 'package:readery/features/readinglist/list_novels.dart';
-import 'package:readery/routing/screens/update_delete_rlist.dart';
+import 'package:readery/features/readinglist/update_delete_rlist.dart';
 
 //collection references
 final CollectionReference libraryCollection =
@@ -101,7 +101,9 @@ class _LibraryPageState extends State<LibraryPage> {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      UpdateRlist()));
+                                                      UpdateRlist(
+                                                          docId:
+                                                              docIDs[index])));
                                         },
                                         icon: const Icon(Icons.edit_outlined),
                                       ),

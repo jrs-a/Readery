@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
             scaffoldBackgroundColor: Theme.of(context).colorScheme.background,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
-          home: Testsearch(),
+          home: const CheckStatus(),
         ),
       );
 }

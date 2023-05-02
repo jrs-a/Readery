@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:readery/features/read%20data/get_forum_data.dart';
-import 'package:readery/routing/screens/create_forum.dart';
-import 'package:readery/routing/screens/my_forum.dart';
-import 'package:readery/routing/screens/forums_comment.dart';
+import 'package:readery/features/forums/create_forum.dart';
+import 'package:readery/features/forums/my_forum.dart';
+import 'package:readery/features/forums/forums_comment.dart';
 
 class ForumsPage extends StatefulWidget {
   const ForumsPage({Key? key}) : super(key: key);
@@ -31,6 +31,7 @@ class _ForumsPageState extends State<ForumsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         title: const Text('Forums'),
         actions: [
@@ -50,43 +51,34 @@ class _ForumsPageState extends State<ForumsPage> {
           )
         ],
       ),
-      body: Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-              child: FutureBuilder(
-            future: getDocId(),
-            builder: ((context, snapshot) {
-              return ListView.builder(
-                itemCount: docIDs.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      title: GetForumData(documentId: docIDs[index]),
-                      tileColor: Colors.grey[200],
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => CommentsScreen()));
-                            },
-                            icon: const Icon(Icons.chat_bubble),
-                            color: Colors.orange,
-                          )
-                        ],
-                      ),
-                    ),
+      body: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Center(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                  child: FutureBuilder(
+                future: getDocId(),
+                builder: ((context, snapshot) {
+                  return ListView.builder(
+                    itemCount: docIDs.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: ListTile(
+                          title: GetForumData(documentId: docIDs[index]),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const CommentsScreen()));
+                          },
+                        ),
+                      );
+                    },
                   );
-                },
-              );
-            }),
-          ))
-        ],
-      )),
+                }),
+              ))
+            ],
+          ))),
     );
   }
 }

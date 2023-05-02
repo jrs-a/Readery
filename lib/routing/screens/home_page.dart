@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:readery/routing/root_page.dart';
 
 import '../../features/auth/login_page.dart';
+import '../../features/novels/novel_info.dart';
 
 /*
   checkStatus() - checks status if logged in for redirection
@@ -55,12 +56,60 @@ class _HomePageState extends State<HomePage> {
           Container(
               //app bar part here
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    WidgetSearch(size: size),
-                    const WidgetNotif(),
-                  ])),
+              child: Flexible(
+                //search
+                child: Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  // width: size.width * 0.6,
+                  decoration: BoxDecoration(
+                      color: const Color(0xFFF1E9E7),
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(
+                          color: const Color(0xFFF1E9E7), width: 1.5)),
+                  child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: Icon(Icons.search_outlined,
+                                color:
+                                    Theme.of(context).colorScheme.onSurface)),
+                        Expanded(
+                          child: TextField(
+                            showCursor: false,
+                            decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                focusedBorder: InputBorder.none),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => WidgetSearch()));
+                            },
+                          ),
+                        ),
+                      ]),
+                ),
+              )
+
+              // TextField(
+              //   showCursor: false,
+              //   decoration: const InputDecoration(
+              //       border: InputBorder.none, focusedBorder: InputBorder.none),
+              //   onTap: () {
+              //     Navigator.push(context,
+              //         MaterialPageRoute(builder: (context) => WidgetSearch()));
+              //   },
+              // )
+              // Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //     children: [
+              //       WidgetSearch(size: size),
+              //       const WidgetNotif(),
+              //     ]),
+              ),
           //scrollable part here laters
         ])));
   }
@@ -74,10 +123,10 @@ these are necessary to use setState function  */
 class WidgetSearch extends StatefulWidget {
   WidgetSearch({
     super.key,
-    required this.size,
+    // required this.size,
   });
 
-  final Size size;
+  // final Size size;
 
   @override
   State<StatefulWidget> createState() => _WidgetSearchState();
@@ -89,6 +138,7 @@ class _WidgetSearchState extends State<WidgetSearch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         title: Card(
           child: TextField(
@@ -104,7 +154,7 @@ class _WidgetSearchState extends State<WidgetSearch> {
         stream: FirebaseFirestore.instance.collection('Novel').snapshots(),
         builder: (context, snapshots) {
           return (snapshots.connectionState == ConnectionState.waiting)
-              ? Center(
+              ? const Center(
                   child: CircularProgressIndicator(),
                 )
               : ListView.builder(
@@ -112,26 +162,26 @@ class _WidgetSearchState extends State<WidgetSearch> {
                   itemBuilder: (context, index) {
                     var data = snapshots.data!.docs[index].data()
                         as Map<String, dynamic>;
-
                     if (name.isEmpty) {
                       return ListTile(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      NovelInfo(data['novelId'])));
+                        },
                         title: Text(
                           data['title'],
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
+                          style: Theme.of(context).textTheme.labelLarge,
                         ),
                         subtitle: Text(
                           data['author'],
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
+                          style: Theme.of(context).textTheme.labelLarge,
                         ),
                         leading: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
@@ -143,23 +193,24 @@ class _WidgetSearchState extends State<WidgetSearch> {
                         .toString()
                         .startsWith(name.toLowerCase())) {
                       return ListTile(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      NovelInfo(data['novelId'])));
+                        },
                         title: Text(
                           data['title'],
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
+                          style: Theme.of(context).textTheme.labelLarge,
                         ),
                         subtitle: Text(
                           data['author'],
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
+                          style: Theme.of(context).textTheme.labelLarge,
                         ),
                         leading: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
@@ -213,7 +264,7 @@ class _WidgetSearchState extends State<WidgetSearch> {
   }*/
 }
 
-//notifications
+//notifications ->>>search bar
 class WidgetNotif extends StatelessWidget {
   const WidgetNotif({
     super.key,
@@ -230,23 +281,47 @@ class WidgetNotif extends StatelessWidget {
         border: Border.all(
             color: Theme.of(context).colorScheme.outlineVariant, width: 1.5),
       ),
-      child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-                width: 40,
-                child: IconButton(
-                  icon: const Icon(Icons.chat_bubble_outline),
-                  onPressed: () {},
-                )),
-            SizedBox(
-                width: 40,
-                child: IconButton(
-                  icon: const Icon(Icons.notifications_none_outlined),
-                  onPressed: () {},
-                )),
-          ]),
+      // child: Row(
+      //     crossAxisAlignment: CrossAxisAlignment.center,
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     children: [
+      //       SizedBox(
+      //           width: 40,
+      //           child: IconButton(
+      //             icon: const Icon(Icons.chat_bubble_outline),
+      //             onPressed: () {},
+      //           )),
+      //       SizedBox(
+      //           width: 40,
+      //           child: IconButton(
+      //             icon: const Icon(Icons.notifications_none_outlined),
+      //             onPressed: () {},
+      //           )),
+      //     ]),
+    );
+  }
+}
+
+class NewSearch extends StatefulWidget {
+  const NewSearch({super.key});
+
+  @override
+  State<NewSearch> createState() => _NewSearchState();
+}
+
+class _NewSearchState extends State<NewSearch> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: TextField(
+        showCursor: false,
+        decoration: const InputDecoration(
+            border: InputBorder.none, focusedBorder: InputBorder.none),
+        onTap: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => WidgetSearch()));
+        },
+      ),
     );
   }
 }
