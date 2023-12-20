@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:readery/routing/screens/home_page.dart';
 import 'package:readery/routing/screens/explore.dart';
 import 'package:readery/routing/screens/forums.dart';
-import 'package:readery/routing/screens/home_page.dart';
 import 'package:readery/routing/screens/library.dart';
+import 'package:readery/features/auth/user_profile.dart';
 
 class RootPage extends StatefulWidget {
   const RootPage({Key? key}) : super(key: key);
@@ -14,11 +15,12 @@ class RootPage extends StatefulWidget {
 class _RootPageState extends State<RootPage> {
   int index = 0;
 
-  List<Widget> pages = const [
-    HomePage(),
-    ExplorePage(),
-    ForumsPage(),
-    LibraryPage()
+  List<Widget> pages = [
+    const HomePage(),
+    const ExplorePage(),
+    const ForumsPage(),
+    const LibraryPage(),
+    const UserProfile(),
   ];
 
   @override
@@ -53,6 +55,11 @@ class _RootPageState extends State<RootPage> {
             icon: Icon(Icons.collections_bookmark_outlined),
             label: 'Library',
           ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.person_2),
+            icon: Icon(Icons.person_2_outlined),
+            label: 'Profile',
+          )
         ],
       ),
     );

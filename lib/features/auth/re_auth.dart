@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,14 +19,14 @@ import 'package:readery/routing/screens/home_page.dart';
 
 /* CLASS LOGIN: is called on logging in to init firebase and show
   loading before the actual login form is shown */
-class Login extends StatefulWidget {
-  const Login({super.key});
+class ReAuth extends StatefulWidget {
+  const ReAuth({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<ReAuth> createState() => _ReAuthState();
 }
 
-class _LoginState extends State<Login> {
+class _ReAuthState extends State<ReAuth> {
   //initializing firebase
   Future<FirebaseApp> _initiliazeFirebase() async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
@@ -39,7 +40,7 @@ class _LoginState extends State<Login> {
         future: _initiliazeFirebase(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return const LoginScreen();
+            return const ReAuthScreen();
           }
           return const Center(
             child: CircularProgressIndicator(),
@@ -50,15 +51,15 @@ class _LoginState extends State<Login> {
   }
 }
 
-//CLASS LOGINSCREEN: the actual login form and function
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+//CLASS ReAuthSCREEN: the actual ReAuth form and function
+class ReAuthScreen extends StatefulWidget {
+  const ReAuthScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ReAuthScreen> createState() => _ReAuthScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ReAuthScreenState extends State<ReAuthScreen> {
   static Future<User?> loginAttempt(
       {required String email,
       required String password,
@@ -103,6 +104,37 @@ class _LoginScreenState extends State<LoginScreen> {
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
 
+    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+
+    Future<void> deleteUser(String? email, String? userId) async {
+      try {
+        await firebaseAuth.currentUser?.delete();
+
+        QuerySnapshot querySnapshot1 = await FirebaseFirestore.instance
+            .collection('ReadingList')
+            .where('UserId', isEqualTo: userId)
+            .get();
+
+        for (QueryDocumentSnapshot docSnapshot in querySnapshot1.docs) {
+          await docSnapshot.reference.delete();
+        }
+
+        QuerySnapshot querySnapshot2 = await FirebaseFirestore.instance
+            .collection('UserData')
+            .where('UserId', isEqualTo: userId)
+            .get();
+
+        for (QueryDocumentSnapshot docSnapshot in querySnapshot2.docs) {
+          await docSnapshot.reference.delete();
+        }
+
+        print("[INFO MESSAGE HERE] user deleted succesfully!");
+      } catch (e) {
+        print('[ERROR MESSAGE HERE] $e');
+      }
+    }
+
     return Container(
       height: double.infinity,
       color: Theme.of(context).colorScheme.background,
@@ -112,11 +144,9 @@ class _LoginScreenState extends State<LoginScreen> {
             // mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 40),
-              SizedBox(
-                  height: 350, child: Image.asset('assets/images/hello.png')),
-              Text('Welcome back!',
-                  textAlign: TextAlign.center,
+              const SizedBox(height: 150),
+              Text('Log in again to confirm account deletion',
+                  textAlign: TextAlign.left,
                   style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 16),
               TextField(
@@ -135,6 +165,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: double.infinity,
                   child: FilledButton(
                       onPressed: () async {
+                        // await user?.reauthenticateWithCredential(credential);
+
                         User? user = await loginAttempt(
                             email: emailController.text,
                             password: passwordController.text,
@@ -142,13 +174,27 @@ class _LoginScreenState extends State<LoginScreen> {
                         print(user);
                         if (!mounted) return;
                         if (user != null) {
+                          //TODO HERE
+                          deleteUser(user.email!, user.uid).then((value) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content:
+                                  const Text('Account deleted successfully'),
+                              behavior: SnackBarBehavior.floating,
+                              action: SnackBarAction(
+                                  label: 'Dismiss',
+                                  onPressed: () {
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                  }),
+                            ));
+                          });
                           Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
                                   builder: (_) => const CheckStatus()),
                               (Route<dynamic> route) => false);
                         }
                       },
-                      child: const Text("Login"))),
+                      child: const Text("Confirn Delete Account"))),
               SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
@@ -162,32 +208,30 @@ class _LoginScreenState extends State<LoginScreen> {
                         await provider.googleLogin().whenComplete(() {
                           final user = FirebaseAuth.instance.currentUser;
                           if (user != null) {
+                            //TODO HERE
+                            deleteUser(user.email!, user.uid).then((value) {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content:
+                                    const Text('Account deleted successfully'),
+                                behavior: SnackBarBehavior.floating,
+                                action: SnackBarAction(
+                                    label: 'Dismiss',
+                                    onPressed: () {
+                                      ScaffoldMessenger.of(context)
+                                          .hideCurrentSnackBar();
+                                    }),
+                              ));
+                            });
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
                                     builder: (_) => const CheckStatus()),
                                 (Route<dynamic> route) => false);
                           }
                         });
-                      })),
-              signUpOption()
+                      }))
             ]),
       ),
-    );
-  }
-
-  Row signUpOption() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text("Dont have an account?"),
-        TextButton(
-          onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => SignupPage()));
-          },
-          child: const Text("Sign up"),
-        )
-      ],
     );
   }
 }
